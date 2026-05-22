@@ -1,0 +1,152 @@
+---
+title: "Marketing Sales Analysis and Linear Regression Modeling"
+format: html
+---
+# Marketing Sales Analysis and Linear Regression Modeling
+This project analyzes marketing expenditure across multiple promotional channels and evaluates the relationship between advertising investment and sales performance using exploratory data analysis and linear regression.
+
+## 1. Dataset Acquisition and Initial Exploration
+```{python}
+import pandas as pd
+data=pd.read_csv("C:/Users/Udith P Kidiyoor/Downloads/marketing_sales_data.csv")
+data.head(15)
+```
+## 2. Data Inspection and Quality Assessment
+```{python}
+data.info()
+```
+
+```{python}
+data.describe()
+```
+### Missing Value Identification
+```{python}
+data.isna().sum()
+```
+
+```{python}
+mask=data.isna()
+mask=mask.any(axis=1)
+data[mask]
+```
+## 3. Data Cleaning and Preparation
+```{python}
+data=data.dropna()
+```
+### Distribution Analysis of Numerical Variables
+### Feature Type Identification
+
+```{python}
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+q1=data["TV"].value_counts()
+sns.barplot(q1, color="orange")
+plt.grid(True)
+plt.show()
+print(q1)
+```
+
+```{python}
+q2=data["Influencer"].value_counts()
+sns.barplot(q2)
+plt.grid(True)
+plt.show()
+print(q2)
+```
+
+```{python}
+numerical_features=data.select_dtypes(include=["float64"]).columns
+numerical_features
+```
+### Distribution Analysis of Numerical Variables
+```{python}
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+plt.figure(figsize=(12,10))
+for i, column in enumerate(numerical_features):
+    plt.subplot(3,1,i+1)
+    sns.histplot(data[column], color="lightblue", kde=True)
+    plt.title(f"Distribution 0f {column}")
+    plt.grid(True)
+plt.tight_layout()
+plt.show()
+```
+### Outlier Detection Using Boxplots
+```{python}
+plt.figure(figsize=(10,10))
+
+for i, column in enumerate(numerical_features):
+    plt.subplot(3,1,i+1)
+    sns.boxplot(x=column, data=data, color="lightgreen")
+    plt.title(f"Boxplot of {column}")
+    plt.grid(True)
+plt.tight_layout()
+plt.show()
+```
+### Relationship Analysis Between Variables
+```{python}
+sns.pairplot(data)
+plt.show()
+```
+### Observaations
+- A positive relationship is observed between Radio promotion budget and Sales
+- A moderate association appears between Social Media and Radio spending
+- Sales show stronger linear alignment with Radio expenditure
+
+## 5. Linear Regression Modeling
+### Regression Visualization
+```{python}
+sns.regplot(x="Radio", y="Sales", data=data, scatter_kws={"color":"lightblue"}, line_kws={"color":"red"})
+plt.show()
+```
+### Model Summary and Statistical Interpretation
+```{python}
+from statsmodels.formula.api import ols
+model=ols("Sales ~ Radio", data)
+model=model.fit()
+print(model.summary())
+```
+### Residual Distribution Assessment
+```{python}
+sns.histplot(model.resid, kde=True)
+plt.show()
+```
+### Normality Assessment Using Q–Q Plot
+```{python}
+import statsmodels.api as sm
+sm.qqplot(model.resid, line="s")
+plt.show()
+```
+### Residuals vs Fitted Values Analysis
+```{python}
+sns.scatterplot(x=model.fittedvalues, y= model.resid)
+plt.axhline()
+plt.show()
+```
+## 7. Conclusion
+
+This project explored the relationship between marketing expenditure and sales performance using exploratory data analysis and simple linear regression.
+
+After cleaning the dataset and analyzing variable relationships, **Radio promotion budget** was selected as the predictor variable for modeling sales.
+
+The regression model achieved an **R² score of 0.757**, indicating that approximately **75.7% of the variation in sales can be explained by radio promotion spending**.
+
+The fitted regression equation was:
+
+\[
+Sales = 8.17(Radio) + 41.53
+\]
+
+Model interpretation suggests that **for every additional one million invested in radio promotion, predicted sales increase by approximately 8.17 million on average**.
+
+Diagnostic evaluation using residual distribution, Q–Q plots, and residual vs fitted analysis indicated that the regression assumptions were reasonably satisfied.
+
+Overall, the analysis demonstrates that **radio advertising expenditure shows a strong positive relationship with sales and can serve as an effective predictor of sales performance within this dataset.**
+
+
+
+
+
+
