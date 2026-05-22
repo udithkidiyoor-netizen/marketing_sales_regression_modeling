@@ -1,0 +1,112 @@
+---
+title: "Untitled"
+format: html
+---
+
+
+```{python}
+import pandas as pd
+data=pd.read_csv("C:/Users/Udith P Kidiyoor/Downloads/marketing_and_sales_data_evaluate_lr.csv")
+data.head(10)
+```
+
+```{python}
+data.info()
+```
+
+```{python}
+data.shape
+```
+
+```{python}
+data.describe()
+```
+
+```{python}
+data.isna().sum()
+```
+
+```{python}
+mask=data.isna()
+mask=mask.any(axis=1)
+data[mask]
+```
+
+```{python}
+missing_sales=round(data["Sales"].isna().mean()*100,2)
+print(f"Percentage of missing values in the sales column {missing_sales}%")
+```
+
+```{python}
+data=data.dropna(subset=["Sales"])
+```
+
+
+```{python}
+numerical_features=data.select_dtypes(include=["float64"]).columns
+```
+
+```{python}
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+for i, column in enumerate(data.columns):
+    plt.subplot(2,2,i+1)
+    sns.histplot(data[column], color="blue", kde=True)
+    plt.grid(True)
+plt.tight_layout()
+plt.show()
+```
+
+```{python}
+sns.histplot(data["Sales"], bins=30, kde=True)
+plt.grid(True)
+plt.show()
+```
+
+```{python}
+sns.boxplot(data=data, x="Sales", color="darkorange")
+plt.show()
+```
+
+```{python}
+sns.pairplot(data)
+plt.show()
+```
+
+```{python}
+sns.regplot(data=data, x="TV", y="Sales")
+plt.show()
+```
+
+```{python}
+from statsmodels.formula.api import ols
+model=ols("Sales ~ TV", data=data)
+model=model.fit()
+print(model.summary())
+```
+
+```{python}
+sns.histplot(data=model.resid, kde=True)
+plt.show()
+```
+
+```{python}
+import statsmodels.api as sm
+sm.qqplot(data=model.resid, line="s")
+plt.show()
+```
+
+```{python}
+sns.scatterplot(data=data, x=model.fittedvalues, y=model.resid)
+plt.axhline()
+plt.show()
+```
+
+
+
+
+
+
+
+
